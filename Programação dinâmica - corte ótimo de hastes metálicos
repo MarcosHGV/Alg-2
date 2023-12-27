@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+int compara(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int corte(int haste, int tamanho, int preco[])
+{
+    int i, j;
+    int *vet = (int *)malloc(sizeof(int) * (haste + 1));
+
+    vet[0] = 0;
+
+    for (i = 1; i <= haste; i++)
+    {
+        int maxValor = 0;
+        
+        for (j = 0; j < tamanho; j++)
+        {
+            if (i >= j + 1)
+            {
+                maxValor = compara(maxValor, preco[j] + vet[i - j - 1]);
+            }
+        }
+        vet[i] = maxValor;
+    }
+
+    return vet[haste];
+}
+
+int main(void)
+{
+    int i, tamanho, haste;
+
+    scanf("%d", &haste);
+    scanf("%d", &tamanho);
+
+    int valor[tamanho];
+
+    for (i = 0; i < tamanho; i++)
+    {
+        scanf("%d", &valor[i]);
+    }
+
+    printf("%d", corte(haste, tamanho, valor));
+}
