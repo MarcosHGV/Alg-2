@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int val_troco(int moedas[], int tam_vetor, int troco, int pos_moeda)
+{
+    if (troco == 0)
+    {
+        return 0;
+    }
+
+    if (pos_moeda >= tam_vetor)
+    {
+        return -1;
+    }
+
+    int sem_moeda = val_troco(moedas, tam_vetor, troco, pos_moeda + 1);
+
+    int com_moeda = -1;
+    
+    if (moedas[pos_moeda] <= troco)
+    {
+        int restante = val_troco(moedas, tam_vetor, troco - moedas[pos_moeda], pos_moeda);
+        
+        if (restante != -1)
+        {
+            com_moeda = 1 + restante;
+        }
+    }
+
+    if (com_moeda == -1)
+    {
+        return sem_moeda;
+    }
+    else if (sem_moeda == -1)
+    {
+        return com_moeda;
+    }
+    else
+    {
+        return (com_moeda < sem_moeda) ? com_moeda : sem_moeda;
+    }
+}
+
+int main(void)
+{
+    int i, troco, quantidade;
+
+    scanf("%d", &troco);
+    scanf("%d", &quantidade);
+
+    int moedas[quantidade];
+
+    for (i = 0; i < quantidade; i++)
+    {
+        scanf("%d", &moedas[i]);
+    }
+
+    printf("%d", val_troco(moedas, quantidade, troco, 0));
+
+}
