@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+void distribuirCargas(int *tamanho, int carga_1, int carga_2, int *cont_1, int *cont_2)
+{
+    *cont_1 = 0;
+    *cont_2 = 0;
+
+    while (*tamanho > 0)
+    {
+        if (carga_1 > carga_2)
+        {
+            if (*tamanho >= carga_1)
+            {
+                *tamanho -= carga_1;
+                (*cont_1)++;
+            } else if (*tamanho >= carga_2)
+            {
+                *tamanho -= carga_2;
+                (*cont_2)++;
+            } else {
+                break;
+            }
+        } else {
+            if (*tamanho >= carga_2) 
+            {
+                *tamanho -= carga_2;
+                (*cont_2)++;
+            } else if (*tamanho >= carga_1) 
+            {
+                *tamanho -= carga_1;
+                (*cont_1)++;
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    int tamanho, carga_1, carga_2;
+    
+    scanf("%d%d%d", &tamanho, &carga_1, &carga_2);
+
+    int cont_1, cont_2;
+    distribuirCargas(&tamanho, carga_1, carga_2, &cont_1, &cont_2);
+
+    printf("%d\n", cont_1);
+    printf("%d\n", cont_2);
+    printf("%d\n", tamanho);
+
+}
