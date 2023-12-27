@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+void soma_incremento(int *a, int b)
+{
+    if (b == 1)
+    {
+        (*a)++;
+    }
+    else
+    {
+        if (b % 2 != 0)
+        {
+            (*a)++;
+            b--;
+        }
+        soma_incremento(a, b / 2);
+        soma_incremento(a, b / 2);
+    }
+}
+
+int main(void) {
+    int i, quantidade;
+
+    scanf("%d", &quantidade);
+
+    int vet_1[quantidade], vet_2[quantidade];
+
+    for (i = 0; i < quantidade; i++)
+    {
+        scanf("%d%d", &vet_1[i], &vet_2[i]);
+    }
+
+    for (i = 0; i < quantidade; i++)
+    {
+        int resultado = vet_1[i];
+        soma_incremento(&resultado, vet_2[i]);
+        printf("%d\n", resultado);
+    }
+
+    return 0;
+}
