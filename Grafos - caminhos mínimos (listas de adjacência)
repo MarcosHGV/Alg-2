@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct Cell Cell;
+
+struct Cell {
+    int key;
+    int peso_aresta;
+    Cell* next;
+};
+
+typedef struct {
+    int num_vertices;
+    int num_arestas;
+    Cell** adj;
+} GrafoLA;
+
+typedef struct {
+    int* pai;
+    int* chave;
+    int* tree;
+} CaminhoMinimo;
+
+Cell* criar_celula(int key, int peso_aresta) {
+    Cell* c = (Cell*) malloc(sizeof(Cell));
+    c->key = key;
+    c->peso_aresta = peso_aresta;
+    c->next = NULL;
+    return c;
+}
+
+void inserir_adj(GrafoLA* G, int origem, int destino, int peso_aresta) {
+    Cell* novo = criar_celula(destino, peso_aresta);
+    novo->next = G->adj[origem];
+    G->adj[origem] = novo;
+}
+
+GrafoLA* iniciar_grafoLA(int num_vertices, int num_arestas) {
+    GrafoLA* G = (GrafoLA*) malloc(sizeof(GrafoLA));
+    G->num_vertices = num_vertices;
+    G->num_arestas = num_arestas;
+    G->adj = (Cell**) calloc(num_vertices, sizeof(Cell*));
+    return G;
+}
+
+CaminhoMinimo* iniciar_caminho_minimo(int num_vertices) {
+    CaminhoMinimo* cm = (CaminhoMinimo*) malloc(sizeof(CaminhoMinimo));
+    cm->pai = (int*) malloc(num_vertices * sizeof(int));
+    cm->chave = (int*) malloc(num_vertices * sizeof(int));
+    cm->tree = (int*) malloc(num_vertices * sizeof(int));
+    return cm;
+}
+
+void imprimir_caminho_minimo(CaminhoMinimo* cm, int num_vertices) {
+    int i;
+    for (i = 0; i < num_vertices; i++) {
+        printf("%d: ", i);
+        if (cm->pai[i] != -1)
+            printf("%d\n", cm->pai[i]);
+        else
+            printf("-\n");
+    }
+}
+
+int encontrar_vertice_menor(CaminhoMinimo* cm, int num_vertices) {
+    int vertice_menor = -1;
+    int i;
+    int chave_minima = INT_MAX;
+
+    for (i = 0; i < num_vertices; i++) {
+        if (!cm->tree[i] && cm->chave[i] < chave_minima) {
+            chave_minima = cm->chave[i];
+            vertice_menor = i;
+        }
+    }
+
+    if (vertice_menor != -1)
+        cm->tree[vertice_menor] = 1;
+
+    return vertice_menor;
+}
+
+void dijkstra(GrafoLA* G, int origem)
+{
+    int vertice_atual, vertice_adjacente, peso_aresta;
+    Cell* temp;
+    CaminhoMinimo* cm = iniciar_caminho_minimo(G->num_vertices);
+
+    for (vertice_atual = 0; vertice_atual < G->num_vertices; vertice_atual++) {
+        cm->pai[vertice_atual] = -1;
+        cm->chave[vertice_atual] = INT_MAX;
+        cm->tree[vertice_atual] = 0;
+    }
+
+    cm->chave[origem] = 0;
+
+    while ((vertice_atual = encontrar_vertice_menor(cm, G->num_vertices)) != -1) {
+        temp = G->adj[vertice_atual];
+        while (temp != NULL) {
+            vertice_adjacente = temp->key;
+            peso_aresta = temp->peso_aresta;
+            if (!cm->tree[vertice_adjacente] && cm->chave[vertice_atual] + peso_aresta < cm->chave[vertice_adjacente]) {
+                cm->chave[vertice_adjacente] = cm->chave[vertice_atual] + peso_aresta;
+                cm->pai[vertice_adjacente] = vertice_atual;
+            }
+            temp = temp->next;
+        }
+    }
+
+    imprimir_caminho_minimo(cm, G->num_vertices);
+}
+
+
+int main(void) {
+    int tam, aresta;
+    scanf("%d", &tam);
+
+    GrafoLA* G = iniciar_grafoLA(tam, aresta);
+
+    scanf("%d", &aresta);
+    int a_1, a_2, peso;
+
+    for (int i = 0; i < aresta; i++) {
+        scanf("%d %d %d", &a_1, &a_2, &peso);
+        inserir_adj(G, a_1, a_2, peso);
+    }
+
+    dijkstra(G, 0);
+}
