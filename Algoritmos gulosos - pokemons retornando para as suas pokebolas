@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+int comparacao(const void *pos_pokemon, const void *pos_pokebola)
+{
+    const int *pokemon = (const int *)pos_pokemon;
+    const int *pokebola = (const int *)pos_pokebola;
+    
+    return (*pokemon - *pokebola);
+}
+
+
+int tempo_total(int pokemon[], int pokebola[], int quantidade)
+{
+    int i, aux, tempo = 0;
+    
+    qsort(pokemon, quantidade, sizeof(int), comparacao);
+    qsort(pokebola, quantidade, sizeof(int), comparacao);
+    
+    for(i = 0; i< quantidade; i++)
+    {
+        aux = pokemon[i] > pokebola[i] ? (pokemon[i] - pokebola[i]) : (pokebola[i] - pokemon[i]);
+        
+        tempo = aux > tempo ? aux : tempo;
+    }
+    
+    return tempo;
+}
+
+int main(void)
+{
+    int i, quantidade;
+    
+    scanf("%d", &quantidade);
+    
+    int pokemon[quantidade], pokebola[quantidade];
+    
+    for (i = 0; i < quantidade; i++)
+    {
+        scanf("%d", &pokemon[i]);
+    }
+    
+    for (i = 0; i < quantidade; i++)
+    {
+        scanf("%d", &pokebola[i]);
+    }
+
+    printf("%d\n", tempo_total(pokemon, pokebola, quantidade));
+
+}
